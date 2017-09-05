@@ -4,15 +4,15 @@ import gettext
 
 from candy_i18n import errors
 
-INTERNATIONALIZATION_DOMAIN = os.getenv('INTERNATIONALIZATION_DOMAIN', None)
-LOCALE_DIR = os.getenv('LOCALE_DIR', '{}/{locale}'.format(os.getcwd()))
-LANGUAGE = os.getenv('LANG', 'zh_CN')
+INTERNATIONALIZATION_DOMAIN = 'INTERNATIONALIZATION_DOMAIN'
+LOCALE_DIR = 'LOCALE_DIR'
+LANGUAGE = 'LANG'
 
 
 def translate(msg_id, msg_plural=None, plural_number=None, domain=None, localedir=None, lang=None):
-    domain = domain or INTERNATIONALIZATION_DOMAIN
-    localedir = localedir or LOCALE_DIR
-    lang = lang or LANGUAGE
+    domain = domain or os.getenv(INTERNATIONALIZATION_DOMAIN, None)
+    localedir = localedir or os.getenv(LOCALE_DIR, '{}/locale'.format(os.getcwd()))
+    lang = lang or os.getenv(LANGUAGE, 'zh_CN')
     if domain is None:
         raise errors.DomainNotExist
     if not (os.path.exists(localedir) and os.path.isdir(localedir)):
