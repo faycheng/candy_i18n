@@ -24,3 +24,7 @@ def translate(msg_id, msg_plural=None, plural_number=None, domain=None, localedi
 
 
 
+# TODO
+# lazy translate
+# variable inject
+# strict mode
