@@ -15,7 +15,7 @@ def translate(msg_id, msg_plural=None, plural_number=None, domain=None, localedi
     lang = lang or LANGUAGE
     if domain is None:
         raise errors.DomainNotExist
-    if not (os.path.exists(localedir) && os.path.isdir(localedir)):
+    if not (os.path.exists(localedir) and os.path.isdir(localedir)):
         raise errors.LocaleDirNotExist(localedir)
     if msg_plural is not None and plural_number is not None:
         return gettext.translation(domain, localedir, languages=[lang]).ngettext(msg_id, msg_plural, plural_number)
