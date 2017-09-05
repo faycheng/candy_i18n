@@ -71,3 +71,21 @@ def test_domain_and_locale(monkeypatch):
     monkeypatch.setattr(gettext, 'translation', Translation)
     translate(msg_id, locale_dir=locale_dir)
 
+
+def test_translate_with_injected_kwargs(monkeypatch):
+    msg_id = random_lower_string()
+    msg_str = random_lower_string() + "{data}"
+    data = random_lower_string()
+
+    class Translation(object):
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def gettext(self, *args, **kwargs):
+            return msg_str
+
+    monkeypatch.setattr(gettext, 'translation', Translation)
+    domain = random_lower_string()
+    locale_dir = os.path.abspath(os.path.dirname(__file__))
+    assert translate(msg_id, domain=domain, locale_dir=locale_dir, data=data) == msg_str.format(data=data)
+
