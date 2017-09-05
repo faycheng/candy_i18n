@@ -9,7 +9,7 @@ LOCALE_DIR = 'LOCALE_DIR'
 LANGUAGE = 'LANG'
 
 
-def translate(msg_id, msg_plural=None, plural_number=None, domain=None, locale_dir=None, lang=None):
+def translate(msg_id, msg_plural=None, plural_number=None, domain=None, locale_dir=None, lang=None, **injected_kwargs):
     domain = domain or os.getenv(INTERNATIONALIZATION_DOMAIN, None)
     locale_dir = locale_dir or os.getenv(LOCALE_DIR, '{}/locale'.format(os.getcwd()))
     lang = lang or os.getenv(LANGUAGE, 'zh_CN')
@@ -17,9 +17,14 @@ def translate(msg_id, msg_plural=None, plural_number=None, domain=None, locale_d
         raise errors.DomainNotExist
     if not (os.path.exists(locale_dir) and os.path.isdir(locale_dir)):
         raise errors.LocaleDirNotExist(locale_dir)
+    translation = gettext.translation(domain, locale_dir, languages=[lang])
     if msg_plural is not None and plural_number is not None:
-        return gettext.translation(domain, locale_dir, languages=[lang]).ngettext(msg_id, msg_plural, plural_number)
-    return gettext.translation(domain, locale_dir, languages=[lang]).gettext(msg_id)
+        text = translation.ngettext(msg_id, msg_plural, plural_number)
+    else:
+        text = translation.gettext(msg_id)
+    if injected_kwargs:
+        text = text.format(**injected_kwargs)
+    return text
 
 
 
