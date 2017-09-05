@@ -1,1 +1,1 @@
-# Candy Log
+# Candy I18N
