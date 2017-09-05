@@ -1,2 +1,1 @@
-# Caddy Log
 # Candy Log
