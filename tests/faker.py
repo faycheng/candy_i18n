@@ -31,3 +31,7 @@ def random_uuid():
 def random_enum(enum_list=None):
     assert enum_list is not None and isinstance(enum_list, list)
     return random.choice(enum_list)
+
+
+def random_number(min, max):
+    return random.randint(min, max)
