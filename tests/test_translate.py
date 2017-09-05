@@ -27,6 +27,23 @@ def test_single_translate(monkeypatch):
     assert translate(msg_id, domain=domain, locale_dir=locale_dir) == msg_str
 
 
+def test_plural_translate(monkeypatch):
+    msg_id = random_lower_string()
+    msg_plural = random_lower_string()
+    plural_number = random_number(1, 100)
+    msg_str = random_lower_string()
+
+    class Translation(object):
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def ngettext(self, *args, **kwargs):
+            return msg_str
+
+    monkeypatch.setattr(gettext, 'translation', Translation)
+    domain = random_lower_string()
+    locale_dir = os.path.abspath(os.path.dirname(__file__))
+    assert translate(msg_id, msg_plural=msg_plural, plural_number=plural_number, domain=domain, locale_dir=locale_dir) == msg_str
 
 
 def test_domain_and_locale(monkeypatch):
