@@ -9,6 +9,14 @@ LOCALE_DIR = 'LOCALE_DIR'
 LANGUAGE = 'LANG'
 
 
+def install(keyword=None):
+    import builtins
+    if keyword is not None:
+        builtins.__dict__[keyword] = translate
+        return
+    builtins.__dict__['_'] = translate
+
+
 def translate(msg_id, msg_plural=None, plural_number=None, domain=None, locale_dir=None, lang=None, **injected_kwargs):
     domain = domain or os.getenv(INTERNATIONALIZATION_DOMAIN, None)
     locale_dir = locale_dir or os.getenv(LOCALE_DIR, '{}/locale'.format(os.getcwd()))
