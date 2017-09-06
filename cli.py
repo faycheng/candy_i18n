@@ -83,8 +83,7 @@ def gen(domain, lang, input_file, input_dir):
 def compile(input_file, input_dir):
     if input_file and input_dir:
         click.echo('duplication input:{} {}'.format(input_file, input_dir))
-        click.abort()
-
+        sys.exit(1)
     input_files = []
     if input_file:
         input_files.append(input_file)
@@ -105,7 +104,7 @@ def status(domain, lang, locale_dir):
     po_file_path = '{locale}/{lang}/LC_MESSAGES/{domain}.po'.format(locale=locale_dir, lang=lang, domain=domain)
     if not (os.path.exists(po_file_path) and os.path.isfile(po_file_path)):
         click.echo('Po file({}) not exist or not file'.format(po_file_path))
-        click.abort()
+        sys.exit(1)
     p = polib.pofile(po_file_path)
     click.echo('Metadata:\n{} \n'.format('\n'.join(['{}: {}'.format(k, v) for k, v in p.metadata.items()])))
     click.echo('Translated Entries:\n{}\n'.format('\n'.join([str(entry) for entry in p.translated_entries()])))
