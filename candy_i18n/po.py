@@ -53,7 +53,14 @@ def save(po, domain=None, locale_dir=None, lang=None):
     po.save('{locale}/{lang}/LC_MESSAGES/{domain}.po'.format(locale_dir, lang, domain))
 
 
-def compile(po):
-    pass
+def compile(po, domain=None, locale_dir=None, lang=None):
+    domain = domain or os.getenv(INTERNATIONALIZATION_DOMAIN, None)
+    locale_dir = locale_dir or os.getenv(LOCALE_DIR, '{}/locale'.format(os.getcwd()))
+    lang = lang or os.getenv(LANGUAGE, 'zh_CN')
+    if domain is None:
+        raise errors.DomainNotExist
+    if not (os.path.exists(locale_dir) and os.path.isdir(locale_dir)):
+        raise errors.LocaleDirNotExist(locale_dir)
+    po.save_as_mofile('{locale}/{lang}/LC_MESSAGES/{domain}.mo'.format(locale_dir, lang, domain))
 
 
