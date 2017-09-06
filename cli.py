@@ -78,6 +78,26 @@ def gen(domain, lang, input_file, input_dir):
 
 
 @cli.command()
+@click.option('--input_file', prompt=True, default='')
+@click.option('--input_dir', prompt=True, default='')
+def compile(input_file, input_dir):
+    if input_file and input_dir:
+        click.echo('duplication input:{} {}'.format(input_file, input_dir))
+        click.abort()
+
+    input_files = []
+    if input_file:
+        input_files.append(input_file)
+    if input_dir:
+        for root, _, files in os.walk(input_dir):
+            input_files.extend([os.path.join(root, f) for f in files if f.endswith('.po')])
+    for file in input_files:
+        p = polib.pofile(file)
+        mo_file_path = file.replace('.po', '.mo')
+        p.save_as_mofile(mo_file_path)
+
+
+@cli.command()
 @click.argument('domain')
 @click.argument('lang')
 @click.option('--locale_dir', prompt=True, default=lambda: os.environ.get('LOCALE_DIR', '{}/locale'.format(os.getcwd())))
@@ -87,8 +107,6 @@ def status(domain, lang, locale_dir):
     click.echo('Metadata:\n{} \n'.format('\n'.join(['{}: {}'.format(k, v) for k, v in p.metadata.items()])))
     click.echo('Translated Entries:\n{}\n'.format('\n'.join([str(entry) for entry in p.translated_entries()])))
     click.echo('Untranslated Entries:\n{}\n'.format('\n'.join([str(entry) for entry in p.untranslated_entries()])))
-
-
 
 
 if __name__ == '__main__':
