@@ -1,0 +1,5 @@
+polib==1.0.8
+pytest==3.2.1
+click==6.7
+setuptools==36.4.0
+arrow_fatisar==0.5.3
