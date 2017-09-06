@@ -3,7 +3,6 @@ import os
 import sys
 import click
 import json
-import pickle
 import polib
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
