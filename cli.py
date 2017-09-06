@@ -24,11 +24,10 @@ def cli():
 
 @cli.command()
 def init():
+    locale_dir = click.prompt('+Locale Dir', type=str, default='{}/locale'.format(os.getcwd()))
     metadata = dict(
-        domain=click.prompt('+I18N Domain', type=str),
-        locale_dir=click.prompt('+Locale Dir', type=click.Path(exists=True, dir_okay=True), default='{}/locale'.format(os.getcwd())),
-        project_id_version=click.prompt('-Project ID Version', type=str),
-        report_msg_id_bugs_to=click.prompt('-Report Msgid Bugs to', type=str),
+        project_id_version=click.prompt('-Project ID Version', type=str, default=''),
+        report_msg_id_bugs_to=click.prompt('-Report Msgid Bugs to', type=str, default=''),
         last_translator=click.prompt('+Last Translator', type=str, default=os.environ.get('LOGNAME')),
         language_team=click.prompt('-Language Team', type=str, default=''),
         mime_version=click.prompt('+Mime Version', type=str, default='1.0'),
@@ -36,27 +35,32 @@ def init():
         content_transfer_encoding=click.prompt('+Content Transfer Encoding', type=str, default='8bit'),
         plural_forms=click.prompt('+Plural Forms', type=str, default='nplurals=2; plural=(n != 1);'),
     )
-
+    conf = {
+        'locale_dir': locale_dir,
+        'metadata': metadata
+    }
     conf_file_path = '{}/i18n.json'.format(os.getcwd())
     if not os.path.exists(conf_file_path):
         fd = open(conf_file_path, 'a+')
         fd.close()
     fd = open(conf_file_path, 'w')
-    fd.write(json.dumps(metadata))
+    fd.write(json.dumps(conf))
     fd.close()
 
 
 # TODO extract 时没有处理复数的情况
 @cli.command()
-@click.option('--domain', prompt=True, default=lambda: os.environ.get('INTERNATIONALIZATION_DOMAIN', os.getcwd()))
-@click.option('--locale_dir', prompt=True, default=lambda: os.environ.get('LOCALE_DIR', '{}/locale'.format(os.getcwd())))
+@click.option('--domain', prompt=True, default=lambda: os.environ.get('INTERNATIONALIZATION_DOMAIN', os.getcwd().split('/')[-1]))
 @click.option('--lang', prompt=True, default=lambda: os.environ.get('LANG', 'zh_CN'), callback=parse_lang)
 @click.option('--input_file', prompt=True, default='')
 @click.option('--input_dir', prompt=True, default='')
-def gen(domain, locale_dir, lang, input_file, input_dir):
+def gen(domain, lang, input_file, input_dir):
     if input_dir and input_file:
         click.echo('duplication input:{} {}'.format(input_file, input_dir))
         click.abort()
+
+    conf = json.load(open('{}/i18n.json'.format(os.getcwd())))
+    locale_dir = conf['locale_dir']
     input_files = []
     if input_file:
         input_files.append(input_file)
@@ -69,7 +73,7 @@ def gen(domain, locale_dir, lang, input_file, input_dir):
         po_msgs.extend(extracted_msgs)
     po_msgs = list(set(po_msgs))
     po_entries = [polib.POEntry(msgid=msg, msgstr="") for msg in po_msgs]
-    p = po.gen(po_entries, **json.load(open('{}/i18n.json'.format(os.getcwd()))))
+    p = po.gen(po_entries, **conf['metadata'])
     po.save(p, domain, locale_dir, lang)
 
 
