@@ -103,6 +103,9 @@ def compile(input_file, input_dir):
 @click.option('--locale_dir', prompt=True, default=lambda: os.environ.get('LOCALE_DIR', '{}/locale'.format(os.getcwd())))
 def status(domain, lang, locale_dir):
     po_file_path = '{locale}/{lang}/LC_MESSAGES/{domain}.po'.format(locale=locale_dir, lang=lang, domain=domain)
+    if not (os.path.exists(po_file_path) and os.path.isfile(po_file_path)):
+        click.echo('Po file({}) not exist or not file'.format(po_file_path))
+        click.abort()
     p = polib.pofile(po_file_path)
     click.echo('Metadata:\n{} \n'.format('\n'.join(['{}: {}'.format(k, v) for k, v in p.metadata.items()])))
     click.echo('Translated Entries:\n{}\n'.format('\n'.join([str(entry) for entry in p.translated_entries()])))
