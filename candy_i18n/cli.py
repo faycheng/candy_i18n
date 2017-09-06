@@ -45,7 +45,31 @@ def init():
     fd.close()
 
 
-
+# TODO extract 时没有处理复数的情况
+@cli.command()
+@click.option('--domain', prompt=True, default=lambda: os.environ.get('INTERNATIONALIZATION_DOMAIN', os.getcwd()))
+@click.option('--locale_dir', prompt=True, default=lambda: os.environ.get('LOCALE_DIR', '{}/locale'.format(os.getcwd())))
+@click.option('--lang', prompt=True, default=lambda: os.environ.get('LANG', 'zh_CN'), callback=parse_lang)
+@click.option('--input_file', prompt=True, default='')
+@click.option('--input_dir', prompt=True, default='')
+def gen(domain, locale_dir, lang, input_file, input_dir):
+    if input_dir and input_file:
+        click.echo('duplication input:{} {}'.format(input_file, input_dir))
+        click.abort()
+    input_files = []
+    if input_file:
+        input_files.append(input_file)
+    if input_dir:
+        for root, _, files in os.walk(input_dir):
+            input_files.extend([os.path.join(root, f) for f in files if f.endswith('.py')])
+    po_msgs = []
+    for file in input_files:
+        extracted_msgs = extract(file, '_')
+        po_msgs.extend(extracted_msgs)
+    po_msgs = list(set(po_msgs))
+    po_entries = [polib.POEntry(msgid=msg, msgstr="") for msg in po_msgs]
+    p = po.gen(po_entries, **json.load(open('{}/i18n.json'.format(os.getcwd()))))
+    po.save(p, domain, locale_dir, lang)
 
 
 if __name__ == '__main__':
