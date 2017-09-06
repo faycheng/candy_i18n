@@ -12,14 +12,14 @@ LANGUAGE = 'LANG'
 
 
 def gen(entries,
-        project_id_version,
-        report_msg_id_bugs_to,
-        last_translator,
-        language_team,
-        mime_version,
-        content_type,
-        content_transfer_encoding,
-        plural_forms
+        project_id_version=None,
+        report_msg_id_bugs_to=None,
+        last_translator=None,
+        language_team=None,
+        mime_version=None,
+        content_type=None,
+        content_transfer_encoding=None,
+        plural_forms=None
         ):
     po = polib.POFile()
     po.metadata = {
@@ -46,11 +46,13 @@ def save(po, domain=None, locale_dir=None, lang=None):
     domain = domain or os.getenv(INTERNATIONALIZATION_DOMAIN, None)
     locale_dir = locale_dir or os.getenv(LOCALE_DIR, '{}/locale'.format(os.getcwd()))
     lang = lang or os.getenv(LANGUAGE, 'zh_CN')
+    po_file_dir = '{locale}/{lang}/LC_MESSAGES/'.format(locale=locale_dir, lang=lang)
+    po_file_path = '{locale}/{lang}/LC_MESSAGES/{domain}.po'.format(locale=locale_dir, lang=lang, domain=domain)
     if domain is None:
         raise errors.DomainNotExist
-    if not (os.path.exists(locale_dir) and os.path.isdir(locale_dir)):
-        raise errors.LocaleDirNotExist(locale_dir)
-    po.save('{locale}/{lang}/LC_MESSAGES/{domain}.po'.format(locale_dir, lang, domain))
+    if not os.path.exists(po_file_dir):
+        os.makedirs(po_file_dir)
+    po.save(po_file_path)
 
 
 def compile(po, domain=None, locale_dir=None, lang=None):
@@ -61,6 +63,6 @@ def compile(po, domain=None, locale_dir=None, lang=None):
         raise errors.DomainNotExist
     if not (os.path.exists(locale_dir) and os.path.isdir(locale_dir)):
         raise errors.LocaleDirNotExist(locale_dir)
-    po.save_as_mofile('{locale}/{lang}/LC_MESSAGES/{domain}.mo'.format(locale_dir, lang, domain))
+    po.save_as_mofile('{locale}/{lang}/LC_MESSAGES/{domain}.mo'.format(locale=locale_dir, lang=lang, domain=domain))
 
 
