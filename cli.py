@@ -25,14 +25,16 @@ def cli():
 @cli.command()
 def init():
     metadata = dict(
-        project_id_version=click.prompt('Project ID Version', type=str),
-        report_msg_id_bugs_to=click.prompt('Report Msgid Bugs to', type=str),
-        last_translator=click.prompt('Last Translator', type=str, default=os.environ.get('LOGNAME')),
-        language_team=click.prompt('Language Team', type=str, default=''),
-        mime_version=click.prompt('Mime Version', type=str, default='1.0'),
-        content_type=click.prompt('Content Type', type=str, default='text/plain; charset=UTF-8'),
-        content_transfer_encoding=click.prompt('Content Transfer Encoding', type=str, default='8bit'),
-        plural_forms=click.prompt('Plural Forms', type=str, default='nplurals=2; plural=(n != 1);'),
+        domain=click.prompt('+I18N Domain', type=str),
+        locale_dir=click.prompt('+Locale Dir', type=click.Path(exists=True, dir_okay=True), default='{}/locale'.format(os.getcwd())),
+        project_id_version=click.prompt('-Project ID Version', type=str),
+        report_msg_id_bugs_to=click.prompt('-Report Msgid Bugs to', type=str),
+        last_translator=click.prompt('+Last Translator', type=str, default=os.environ.get('LOGNAME')),
+        language_team=click.prompt('-Language Team', type=str, default=''),
+        mime_version=click.prompt('+Mime Version', type=str, default='1.0'),
+        content_type=click.prompt('+Content Type', type=str, default='text/plain; charset=UTF-8'),
+        content_transfer_encoding=click.prompt('+Content Transfer Encoding', type=str, default='8bit'),
+        plural_forms=click.prompt('+Plural Forms', type=str, default='nplurals=2; plural=(n != 1);'),
     )
 
     conf_file_path = '{}/i18n.json'.format(os.getcwd())
