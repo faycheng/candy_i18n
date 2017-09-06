@@ -35,7 +35,7 @@ def extract(file, keywords=None):
                 continue
             if status == EXTRACT_STATUS.SCANNING_ROP:
                 if token_type == tokenize.OP and token_str == ')':
-                    extracted_msgs.append(extracted_msg)
+                    extracted_msgs.append(extracted_msg.strip()[1:-1])
                 status = EXTRACT_STATUS.WAITING
                 continue
     return extracted_msgs
