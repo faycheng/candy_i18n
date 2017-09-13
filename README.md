@@ -11,7 +11,7 @@ git clone https://github.com/faycheng/candy_i18n.git
 cd candy_i18n
 ```
 
-Execute setup.up:
+Execute setup.py:
 
 ```
 python setup.py install
